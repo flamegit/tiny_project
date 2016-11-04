@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="match_parent"
+  >
+    <com.flame.custom.CustomDragView
+        android:id="@+id/dragview"
+        android:layout_width="200dp"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        />
+</RelativeLayout>

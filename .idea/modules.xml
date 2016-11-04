@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AutoAirplane/AutoAirplane.iml" filepath="$PROJECT_DIR$/AutoAirplane/AutoAirplane.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BlogCode/BlogCode.iml" filepath="$PROJECT_DIR$/BlogCode/BlogCode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LLK/LLK.iml" filepath="$PROJECT_DIR$/LLK/LLK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Practice/Practice.iml" filepath="$PROJECT_DIR$/Practice/Practice.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StudyDemo.iml" filepath="$PROJECT_DIR$/StudyDemo.iml" />
+    </modules>
+  </component>
+</project>

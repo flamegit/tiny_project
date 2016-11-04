@@ -1,0 +1,89 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<FrameLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.studydemo.MainActivity" >
+
+    <com.example.studydemo.GridImageView
+        android:id="@+id/board"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        />
+    <TextSwitcher
+        android:id="@+id/score"
+        android:layout_width="match_parent"
+        android:background="@android:color/black"
+        android:layout_gravity="top"
+        android:layout_height="40dp"
+        >
+    </TextSwitcher>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="20dip"
+        android:layout_alignParentBottom="true"
+        android:max="100"
+        android:layout_gravity="bottom"
+        style="?android:attr/progressBarStyleHorizontal"
+        >
+    </ProgressBar>
+</FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_blue_dark"
+        >
+
+        <Button
+            android:id="@+id/restart"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:onClick="restartGame"
+            android:text="Restart" />
+        <Button
+            android:id="@+id/start"
+            android:layout_marginBottom="50dp"
+            android:layout_width="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/restart"
+            android:layout_height="wrap_content"
+            android:onClick="startGame"
+            android:text="Start" />
+
+        <Button
+            android:id="@+id/setting"
+            android:layout_marginTop="50dp"
+            android:layout_width="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/restart"
+            android:text="Setting" />
+        
+        <com.example.studydemo.VerticalTextView
+            android:id="@+id/text"
+            android:layout_below="@id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="#ffff00ff"
+            android:padding="20dip"
+            android:text="hello world ! fuccck"
+            android:textColor="@android:color/white"
+            android:textSize="50sp"
+
+             />
+
+    </RelativeLayout>
+
+
+</FrameLayout>

@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_settings_blue_24dp" android:state_selected="true"/>
+    <item android:drawable="@drawable/ic_settings_black_24dp"/> <!-- default -->
+</selector>
