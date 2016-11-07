@@ -1,6 +1,12 @@
 package com.example.studydemo;
 
 
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
+import android.net.Uri;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,18 +27,34 @@ public class GameService {
 	private int mTime=0;
 	private Timer mTimer;
 	private Gamelogic mLogic;
-
 	private GameCallback mCallback;
+	private Context mContext;
+	MediaPlayer mPlayer;
 
-	public GameService(GameCallback callback){
+	public GameService(GameCallback callback, Context context){
 		mLogic=new Gamelogic(NUM,ROW,COLUMN);
+		mPlayer=new MediaPlayer();
 		mCallback=callback;
+		mContext=context;
+	}
+
+	private void initPlayer(){
+        mPlayer.reset();
+		try {
+			AssetFileDescriptor assetFileDescritor = mContext.getAssets().openFd("Dream.mp3");
+			mPlayer.setDataSource(assetFileDescritor.getFileDescriptor());
+			mPlayer.prepare();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mPlayer.start();
 	}
 	private int calculateScore(int num){
         return num *100;
 	}
 
 	public void start(){
+		initPlayer();
 		TimerTask task=new TimerTask() {
 			@Override
 			public void run() {
@@ -56,6 +78,10 @@ public class GameService {
 
 	public void pause(){
 		mTimer.cancel();
+	}
+
+	public void arrange(int p1,int p2){
+		mLogic.arrange(p1,p2);
 	}
 
 	public List<Integer> isLinked(int p1,int p2){

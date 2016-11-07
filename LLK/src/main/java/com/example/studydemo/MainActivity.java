@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 
 import android.app.Fragment;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,6 +27,7 @@ public class MainActivity extends Activity implements GameService.GameCallback{
 	TextSwitcher mScoreView;
 	ProgressBar mProgressBar;
 	GridImageView mBoard;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,7 +55,7 @@ public class MainActivity extends Activity implements GameService.GameCallback{
 				return view;
 			}
 		});
-		mService=new GameService(this);
+		mService=new GameService(this,this);
 	}
 
 	public void click(View view){

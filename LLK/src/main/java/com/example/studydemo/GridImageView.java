@@ -93,15 +93,27 @@ class GridImageView extends View{
         }else {
             mSelected=-1;
             postDelayed(new Runnable() {
+                boolean isClear=false;
+                int p1,p2;
                 @Override
                 public void run() {
+                    if(isClear){
+                        mService.arrange(p1, p2);
+                        invalidate();
+                        return;
+                    }
                     if (mLine != null) {
-                        clear(mLine.get(0), mLine.get(mLine.size() - 1));
+                        p1=mLine.get(0);
+                        p2=mLine.get(mLine.size() - 1);
+                        clear(p1, p2);
                         mLine = null;
                         invalidate();
+                        isClear=true;
+                        postDelayed(this,100);
                     }
                 }
             },100);
+
         }
     }
 

@@ -18,6 +18,7 @@ public class Gamelogic {
     private int ROW;
     private int COLUMN;
     private int NUM;
+    private int mChapter=1;
 
     private int[] mBoard;
 
@@ -76,6 +77,30 @@ public class Gamelogic {
             return null;
         points.add(p1);
         return points;
+    }
+
+    public void arrange(int p1,int p2){
+        if(mChapter==1){
+            int r1 = row(p1,COLUMN);
+            int r2 = row(p2,COLUMN);
+            if(r1<r2){
+                down(p1);
+                down(p2);
+            }else {
+                down(p2);
+                down(p1);
+            }
+
+        }
+    }
+
+    private void down(int p){
+        int r = row(p,COLUMN);
+        int c = column(p,COLUMN);
+        for(int i=r-1;i>=0;i--){
+            mBoard[num(i+1,c)]=mBoard[num(i,c)];
+        }
+        mBoard[num(0,c)]=0;
     }
 
     private int isLinked(int p1, int p2, Set<Integer> s, int c,
