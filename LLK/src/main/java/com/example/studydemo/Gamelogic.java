@@ -80,9 +80,15 @@ public class Gamelogic {
     }
 
     public void arrange(int p1,int p2){
+        int r1 = row(p1,COLUMN);
+        int r2 = row(p2,COLUMN);
+        switch (mChapter){
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+        }
         if(mChapter==1){
-            int r1 = row(p1,COLUMN);
-            int r2 = row(p2,COLUMN);
             if(r1<r2){
                 down(p1);
                 down(p2);
@@ -90,8 +96,8 @@ public class Gamelogic {
                 down(p2);
                 down(p1);
             }
-
         }
+
     }
 
     private void down(int p){
@@ -102,6 +108,17 @@ public class Gamelogic {
         }
         mBoard[num(0,c)]=0;
     }
+
+    private void up(int p){
+        int r = row(p,COLUMN);
+        int c = column(p,COLUMN);
+        for(int i=r+1;i<ROW;i++){
+            mBoard[num(i-1,c)]=mBoard[num(i,c)];
+        }
+        mBoard[num(0,c)]=0;
+    }
+
+
 
     private int isLinked(int p1, int p2, Set<Integer> s, int c,
                          List<Integer> list) {
