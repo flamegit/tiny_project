@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 
 import android.app.Fragment;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -20,30 +21,30 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
-public class MainActivity extends Activity implements GameService.GameCallback{
+import java.io.IOException;
 
+public class MainActivity extends Activity implements GameContract.View{
 	View menu;
-	GameService mService;
+	GameContract.Presenter mPresenter;
 	TextSwitcher mScoreView;
 	ProgressBar mProgressBar;
 	GridImageView mBoard;
+	MediaPlayer mPlayer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
+		initView();
+		initPlayer();
+		mPresenter=new GameService(this);
+	}
+	private void initView(){
 		menu=findViewById(R.id.menu);
 		mBoard=(GridImageView)findViewById(R.id.board);
 		mProgressBar =(ProgressBar)findViewById(R.id.progressbar);
 		mScoreView=(TextSwitcher)findViewById(R.id.score);
-		View view=findViewById(R.id.text);
-		view.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.d("fff","dfdfdsfdddd");
-			}
-		});
 		mScoreView.setFactory(new ViewSwitcher.ViewFactory() {
 			@Override
 			public View makeView() {
@@ -55,13 +56,18 @@ public class MainActivity extends Activity implements GameService.GameCallback{
 				return view;
 			}
 		});
-		mService=new GameService(this,this);
 	}
-
-	public void click(View view){
-		Log.d("fff","dfdfdsfdddd");
+	private void initPlayer(){
+		mPlayer=new MediaPlayer();
+		try {
+			AssetFileDescriptor assetFileDescritor = getAssets().openFd("Dream.mp3");
+			mPlayer.setDataSource(assetFileDescritor.getFileDescriptor());
+			mPlayer.prepare();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mPlayer.start();
 	}
-
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -73,11 +79,8 @@ public class MainActivity extends Activity implements GameService.GameCallback{
 	}
 
 	public void startGame(View view){
-		mBoard.setService(mService);
-		mBoard.invalidate();
 		menu.setVisibility(View.GONE);
-		mService.start();
-
+		mPresenter.start();
 	}
 
 	private void showDialog(){
@@ -87,21 +90,36 @@ public class MainActivity extends Activity implements GameService.GameCallback{
 	}
 
 	@Override
-	public void onScoreChange(int score) {
+	protected void onPause() {
+		super.onPause();
+		mPlayer.stop();
+	}
+	@Override
+	public void setPresenter(GameContract.Presenter p) {
+		mBoard.setPresenter(p);
+	}
+
+	@Override
+	public void startGame() {
+
+	}
+
+	@Override
+	public void updateScore(int score) {
 		mScoreView.setText(score+"");
 	}
 
 	@Override
-	public void onUpdateTime(int time) {
+	public void updateTime(int time) {
 		mProgressBar.setProgress(time);
 	}
 
 	@Override
-	public void onSucess() {
+	public void succeed() {
 	}
 
 	@Override
-	public void onFailed() {
+	public void failed() {
 		showDialog();
 	}
 

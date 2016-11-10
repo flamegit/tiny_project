@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class GridImageView extends View{
-    private GameService mService = null;
+    private GameContract.Presenter mPresenter = null;
     private int  mSize;
     private Paint mBgPaint;
     private Paint mBoardPaint;
@@ -52,12 +52,11 @@ class GridImageView extends View{
         mSize=Math.min(w/COLUMN,h/ROW);
         mOffSetX=(w-COLUMN*mSize)/2;
         mOffSetY=(h-ROW*mSize)/2;
+        mBitmaps=loadImages(mSize);
     }
 
-    public void setService(GameService service) {
-        mService = service;
-        mBoard=mService.fillBoard();
-        mBitmaps=loadImages(mSize);
+    public void setPresenter(GameContract.Presenter presenter){
+        mPresenter=presenter;
     }
 
     public boolean onTouchEvent(MotionEvent event) {
@@ -87,18 +86,19 @@ class GridImageView extends View{
         if(p==mSelected){
             return;
         }
-        mLine=mService.isLinked(mSelected,p);
+        mLine=mPresenter.isLinked(mSelected,p);
         if(mLine==null){
             mSelected=p;
         }else {
             mSelected=-1;
+            //TODO bad code
             postDelayed(new Runnable() {
                 boolean isClear=false;
                 int p1,p2;
                 @Override
                 public void run() {
                     if(isClear){
-                        mService.arrange(p1, p2);
+                        mPresenter.arrange(p1, p2);
                         invalidate();
                         return;
                     }

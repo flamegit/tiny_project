@@ -15,56 +15,38 @@ import  static com.example.studydemo.Constants.ROW;
 import  static com.example.studydemo.Constants.NUM;
 
 
-public class GameService {
-	interface GameCallback{
-		void onScoreChange(int score);
-		void onUpdateTime(int time);
-		void onSucess();
-		void onFailed();
-	}
+public class GameService implements GameContract.Presenter{
 
     private int mCount=0;
 	private int mTime=0;
 	private Timer mTimer;
 	private Gamelogic mLogic;
-	private GameCallback mCallback;
-	private Context mContext;
-	MediaPlayer mPlayer;
+	private GameContract.View mView;
+	private int mChapter;
 
-	public GameService(GameCallback callback, Context context){
+	public GameService(GameContract.View view){
 		mLogic=new Gamelogic(NUM,ROW,COLUMN);
-		mPlayer=new MediaPlayer();
-		mCallback=callback;
-		mContext=context;
+	    mView=view;
+		mView.setPresenter(this);
 	}
 
-	private void initPlayer(){
-        mPlayer.reset();
-		try {
-			AssetFileDescriptor assetFileDescritor = mContext.getAssets().openFd("Dream.mp3");
-			mPlayer.setDataSource(assetFileDescritor.getFileDescriptor());
-			mPlayer.prepare();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		mPlayer.start();
-	}
+
 	private int calculateScore(int num){
         return num *100;
 	}
 
+	@Override
 	public void start(){
-		initPlayer();
 		TimerTask task=new TimerTask() {
 			@Override
 			public void run() {
 				if(mTime==30){
-					mCallback.onFailed();
+					mView.failed();
 					cancel();
 				}
 				else{
 					mTime++;
-					mCallback.onUpdateTime(mTime);
+					mView.updateTime(mTime);
 				}
 			}
 		};
@@ -72,25 +54,33 @@ public class GameService {
 		mTimer.schedule(task,10,1000);
 	}
 
+	@Override
+	public void nextChapter() {
+
+	}
+	@Override
 	public int[] fillBoard(){
 		return mLogic.fillBoard();
 	}
 
+	@Override
 	public void pause(){
 		mTimer.cancel();
 	}
 
+	@Override
 	public void arrange(int p1,int p2){
 		mLogic.arrange(p1,p2);
 	}
 
+	@Override
 	public List<Integer> isLinked(int p1,int p2){
 		List<Integer> line=mLogic.isLinked(p1,p2);
 		if(line!=null){
 			mCount++;
-			mCallback.onScoreChange(calculateScore(mCount));
+			mView.updateScore(calculateScore(mCount));
 			if(mCount==50){
-				mCallback.onSucess();
+				mView.succeed();
 			}
 		}
 		return line;

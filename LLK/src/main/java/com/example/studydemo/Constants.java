@@ -11,8 +11,8 @@ import java.util.TreeSet;
  */
 public class Constants {
 
-    public final static int ROW = 10;
-    public final static int COLUMN = 6;
+    public final static int ROW = 12;
+    public final static int COLUMN = 8;
     public final static int NUM = 10;
 
 }

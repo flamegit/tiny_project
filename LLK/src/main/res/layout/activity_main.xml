@@ -67,21 +67,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/restart"
             android:text="Setting" />
-        
-        <com.example.studydemo.VerticalTextView
-            android:id="@+id/text"
-            android:layout_below="@id/setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="#ffff00ff"
-            android:padding="20dip"
-            android:text="hello world ! fuccck"
-            android:textColor="@android:color/white"
-            android:textSize="50sp"
-
-             />
 
     </RelativeLayout>
 

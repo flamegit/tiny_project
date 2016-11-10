@@ -19,7 +19,6 @@ public class Gamelogic {
     private int COLUMN;
     private int NUM;
     private int mChapter=1;
-
     private int[] mBoard;
 
     public Gamelogic(int num,int row,int column){
@@ -79,44 +78,82 @@ public class Gamelogic {
         return points;
     }
 
+    //TODO bad code
     public void arrange(int p1,int p2){
-        int r1 = row(p1,COLUMN);
-        int r2 = row(p2,COLUMN);
-        switch (mChapter){
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-        }
         if(mChapter==1){
-            if(r1<r2){
-                down(p1);
-                down(p2);
-            }else {
-                down(p2);
-                down(p1);
-            }
+            return;
         }
-
+        int r1 = row(p1,COLUMN);
+        int c1=column(p1,COLUMN);
+        int r2 = row(p2,COLUMN);
+        int c2=column(p2,COLUMN);
+        switch (mChapter){
+            case 2:
+                if(r1<r2){
+                    down(r1,c1);
+                    down(r2,c2);
+                }else {
+                    down(r2,c2);
+                    down(r1,c1);
+                }
+                break;
+            case 3:
+                if(r1>r2){
+                    up(r1,c1);
+                    up(r2,c2);
+                }else {
+                    up(r2,c2);
+                    up(r1,c1);
+                }
+                break;
+            case 4:
+                if(c1>c2){
+                    left(r1,c1);
+                    left(r2,c2);
+                }else {
+                    left(r2,c2);
+                    left(r1,c1);
+                }
+                break;
+            case 5:
+                if(c1<c2){
+                    right(r1,c1);
+                    right(r2,c2);
+                }else {
+                    right(r2,c2);
+                    right(r1,c1);
+                }
+                break;
+            case 6:
+            case 7:
+        }
     }
-
-    private void down(int p){
-        int r = row(p,COLUMN);
-        int c = column(p,COLUMN);
+    private void down(int r,int c){
         for(int i=r-1;i>=0;i--){
             mBoard[num(i+1,c)]=mBoard[num(i,c)];
         }
         mBoard[num(0,c)]=0;
     }
-
-    private void up(int p){
-        int r = row(p,COLUMN);
-        int c = column(p,COLUMN);
+    private void up(int r,int c){
         for(int i=r+1;i<ROW;i++){
             mBoard[num(i-1,c)]=mBoard[num(i,c)];
         }
-        mBoard[num(0,c)]=0;
+        mBoard[num(ROW-1,c)]=0;
     }
+    private void left(int r,int c){
+        for(int i=c+1;i<COLUMN;i++){
+            mBoard[num(r,i-1)]=mBoard[num(r,i)];
+        }
+        mBoard[num(r,COLUMN)]=0;
+    }
+
+    private void right(int r,int c){
+        for(int i=c-1;i>=0;i--){
+            mBoard[num(r,i+1)]=mBoard[num(r,i)];
+        }
+        mBoard[num(r,0)]=0;
+    }
+
 
 
 
