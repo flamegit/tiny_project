@@ -23,7 +23,7 @@ import android.widget.ViewSwitcher;
 
 import java.io.IOException;
 
-public class MainActivity extends Activity implements GameContract.View{
+public class MainActivity extends Activity implements GameContract.View,FailDialogFragment.CallBack{
 	View menu;
 	GameContract.Presenter mPresenter;
 	TextSwitcher mScoreView;
@@ -37,7 +37,7 @@ public class MainActivity extends Activity implements GameContract.View{
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
 		initView();
-		initPlayer();
+		//initPlayer();
 		mPresenter=new GameService(this);
 	}
 	private void initView(){
@@ -68,6 +68,11 @@ public class MainActivity extends Activity implements GameContract.View{
 		}
 		mPlayer.start();
 	}
+
+	@Override
+	public void setGameBoard(int[] board){
+		mBoard.setGameBoard(board);
+	}
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -89,10 +94,13 @@ public class MainActivity extends Activity implements GameContract.View{
 		dialog.setCancelable(false);
 	}
 
+
+
 	@Override
 	protected void onPause() {
+		mPresenter.pause();
 		super.onPause();
-		mPlayer.stop();
+		//mPlayer.stop();
 	}
 	@Override
 	public void setPresenter(GameContract.Presenter p) {
@@ -116,11 +124,27 @@ public class MainActivity extends Activity implements GameContract.View{
 
 	@Override
 	public void succeed() {
+		showDialog();
 	}
 
 	@Override
 	public void failed() {
 		showDialog();
+	}
+
+	@Override
+	public void nextChapter() {
+		mPresenter.nextChapter();
+	}
+
+	@Override
+	public void retry() {
+
+	}
+
+	@Override
+	public void exit() {
+
 	}
 
 }

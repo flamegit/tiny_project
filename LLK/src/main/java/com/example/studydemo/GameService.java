@@ -28,6 +28,7 @@ public class GameService implements GameContract.Presenter{
 		mLogic=new Gamelogic(NUM,ROW,COLUMN);
 	    mView=view;
 		mView.setPresenter(this);
+		mChapter=1;
 	}
 
 
@@ -37,6 +38,9 @@ public class GameService implements GameContract.Presenter{
 
 	@Override
 	public void start(){
+		mLogic.setChapter(mChapter);
+		mView.setGameBoard(mLogic.fillBoard());
+
 		TimerTask task=new TimerTask() {
 			@Override
 			public void run() {
@@ -56,6 +60,10 @@ public class GameService implements GameContract.Presenter{
 
 	@Override
 	public void nextChapter() {
+		mCount=0;
+		mTimer.cancel();
+		mChapter++;
+		start();
 
 	}
 	@Override
@@ -79,7 +87,7 @@ public class GameService implements GameContract.Presenter{
 		if(line!=null){
 			mCount++;
 			mView.updateScore(calculateScore(mCount));
-			if(mCount==50){
+			if(mCount==2){
 				mView.succeed();
 			}
 		}

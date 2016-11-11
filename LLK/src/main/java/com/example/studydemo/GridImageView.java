@@ -59,6 +59,11 @@ class GridImageView extends View{
         mPresenter=presenter;
     }
 
+    public void setGameBoard(int[] board){
+        mBoard=board;
+        invalidate();
+    }
+
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
@@ -93,11 +98,11 @@ class GridImageView extends View{
             mSelected=-1;
             //TODO bad code
             postDelayed(new Runnable() {
-                boolean isClear=false;
+                boolean isCleared=false;
                 int p1,p2;
                 @Override
                 public void run() {
-                    if(isClear){
+                    if(isCleared){
                         mPresenter.arrange(p1, p2);
                         invalidate();
                         return;
@@ -108,7 +113,7 @@ class GridImageView extends View{
                         clear(p1, p2);
                         mLine = null;
                         invalidate();
-                        isClear=true;
+                        isCleared=true;
                         postDelayed(this,100);
                     }
                 }
@@ -116,7 +121,6 @@ class GridImageView extends View{
 
         }
     }
-
 
     private void clear(int i,int j){
         mBoard[i]=0;

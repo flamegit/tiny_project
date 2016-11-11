@@ -21,10 +21,24 @@ public class Gamelogic {
     private int mChapter=1;
     private int[] mBoard;
 
+    private boolean isNoLinked(){
+        for(int i=0;i<ROW*COLUMN;i++){
+            if(mBoard[i]==0){
+                continue;
+            }
+
+        }
+        return false;
+    }
+
     public Gamelogic(int num,int row,int column){
         NUM=num;
         ROW=row;
         COLUMN=column;
+    }
+
+    public void setChapter(int chapter){
+        mChapter=chapter;
     }
 
     private int[] generateBoard() {
@@ -125,6 +139,7 @@ public class Gamelogic {
                 }
                 break;
             case 6:
+
             case 7:
         }
     }
@@ -153,10 +168,6 @@ public class Gamelogic {
         }
         mBoard[num(r,0)]=0;
     }
-
-
-
-
     private int isLinked(int p1, int p2, Set<Integer> s, int c,
                          List<Integer> list) {
         if (c == 0) {

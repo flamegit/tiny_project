@@ -15,6 +15,7 @@ public interface GameContract {
         void updateTime(int time);
         void succeed();
         void failed();
+        void setGameBoard(int[] board);
     }
     interface Presenter{
         void start();

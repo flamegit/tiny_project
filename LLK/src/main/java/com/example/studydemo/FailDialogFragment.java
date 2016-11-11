@@ -1,5 +1,6 @@
 package com.example.studydemo;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -12,6 +13,20 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 public class FailDialogFragment extends DialogFragment{
+
+	interface CallBack{
+		void nextChapter();
+		void retry();
+		void exit();
+	}
+
+	private CallBack mCallBack;
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mCallBack=(CallBack)activity;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,8 +64,11 @@ public class FailDialogFragment extends DialogFragment{
 
 			@Override
 			public void onClick(View v) {
-				Intent intent=new Intent(getActivity(),MainActivity.class);
-				startActivity(intent);
+
+				getDialog().cancel();
+				mCallBack.nextChapter();
+				//Intent intent=new Intent(getActivity(),MainActivity.class);
+				//startActivity(intent);
 			}
 			
 		});
