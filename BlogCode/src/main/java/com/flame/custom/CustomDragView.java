@@ -1,5 +1,7 @@
 package com.flame.custom;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
@@ -41,7 +43,7 @@ public class CustomDragView extends View {
     Path path;
     int status;
 
-    private String text="123";
+    private String text="99+";
     private int ascent;
 
     @Override
@@ -99,11 +101,16 @@ public class CustomDragView extends View {
         super(context, attrs);
         paint=new Paint();
         textPaint=new Paint();
-        textPaint.setTextSize(20);
+        textPaint.setColor(Color.BLUE);
+        textPaint.setTextSize(40);
+        startX=40;
+        startY=40;
+
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
         currRadius=originRadius=30;
         maxLength=10*originRadius;
+
         path=new Path();
         status=IDLE;
         paint.setAntiAlias(true);
@@ -136,20 +143,27 @@ public class CustomDragView extends View {
             path.quadTo(midX,midY,startDownX,startDownY);
             path.close();
 
+            canvas.drawCircle(startX,startY,currRadius,paint);
             canvas.drawPath(path,paint);
-            canvas.drawCircle(endX,endY,originRadius,paint);
+
+            canvas.save();
+            canvas.translate(endX-startX,endY-startY);
+            canvas.drawRoundRect(0,0,getWidth(),getHeight(),20,20,paint);
+            canvas.drawText(text, getPaddingLeft(), getPaddingTop() - ascent, textPaint);
+            canvas.restore();
+        }else {
+            canvas.drawRoundRect(0,0,getWidth(),getHeight(),23,23,paint);
+            Log.d("fxlts",getHeight()+"");
+            canvas.drawText(text, getPaddingLeft(), getPaddingTop() - ascent, textPaint);
         }
-        //canvas.drawCircle(startX,startY,currRadius,paint);
-        canvas.drawRoundRect(1,1,1,1,1,1,paint);
-        canvas.drawText(text, getPaddingLeft(), getPaddingTop() - ascent, textPaint);
 
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        startX=w/2;
-        startY=h/2;
+        //startX=w/2;
+        //startY=h/2;
     }
 
     @Override
@@ -179,6 +193,7 @@ public class CustomDragView extends View {
 
             case MotionEvent.ACTION_UP:
                 goBack();
+                //status=IDLE;
                 break;
         }
 
@@ -190,6 +205,14 @@ public class CustomDragView extends View {
         PropertyValuesHolder endYHolder=PropertyValuesHolder.ofInt("endY",endY,startY);
         ObjectAnimator animator=ObjectAnimator.ofPropertyValuesHolder(this,endXHolder,endYHolder).setDuration(100);
         animator.setInterpolator(new OvershootInterpolator());
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                status=IDLE;
+                invalidate();
+            }
+        });
         animator.start();
     }
 
@@ -248,5 +271,10 @@ public class CustomDragView extends View {
         changeStartPoint(startX,startX);
         invalidate();
     }
+
+
+
+    /************************************** explode **********************/
+
 
 }

@@ -32,6 +32,8 @@ import com.wilddog.client.ValueEventListener;
 import com.wilddog.client.Wilddog;
 import com.wilddog.client.WilddogError;
 
+import java.io.File;
+
 import dalvik.system.PathClassLoader;
 
 public class WilddogActivity extends Activity {
@@ -94,11 +96,28 @@ public class WilddogActivity extends Activity {
         Log.d(TAG, Environment.getExternalStorageDirectory().getAbsolutePath());           ///storage/sdcard0
         Log.d(TAG, Environment.getDataDirectory().getAbsolutePath());                      ///data
         Log.d(TAG, Environment.getDownloadCacheDirectory().getAbsolutePath());             ///cache
-        Log.d(TAG, Environment.getExternalStoragePublicDirectory("apk").getAbsolutePath());   ///storage/sdcard0
+        Log.d(TAG, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath());   ///storage/sdcard0
         Log.d(TAG, Environment.getRootDirectory().getAbsolutePath());
     }
 
+
+    void updateExternalStorageState() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+          File f= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+
+        } else {
+
+        }
+
+    }
+
     public void load(){
+        Environment.getExternalStorageState();
+
+
+
         DownloadManager downloadManager=(DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(null);
         DownloadManager.Request request = new DownloadManager.Request(uri);

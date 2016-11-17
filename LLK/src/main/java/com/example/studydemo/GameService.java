@@ -44,7 +44,7 @@ public class GameService implements GameContract.Presenter{
 		TimerTask task=new TimerTask() {
 			@Override
 			public void run() {
-				if(mTime==30){
+				if(mTime==300){
 					mView.failed();
 					cancel();
 				}
@@ -61,6 +61,7 @@ public class GameService implements GameContract.Presenter{
 	@Override
 	public void nextChapter() {
 		mCount=0;
+		mTime=0;
 		mTimer.cancel();
 		mChapter++;
 		start();
