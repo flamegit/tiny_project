@@ -9,9 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/AutoAirplane" />
             <option value="$PROJECT_DIR$/BlogCode" />
-            <option value="$PROJECT_DIR$/LLK" />
             <option value="$PROJECT_DIR$/Practice" />
           </set>
         </option>

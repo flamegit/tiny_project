@@ -2,6 +2,7 @@ package com.flame.custom;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
@@ -16,7 +17,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnimationSet;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 
@@ -25,8 +28,15 @@ import android.view.animation.OvershootInterpolator;
  */
 public class CustomDragView extends View {
     final static int IDLE=0;
-    final static int MOVE_INSIDE=1;
-    final static int MOVE_OUTSIDE=2;
+    final static int INSIDE=1;
+    final static int ANIMATION=2;
+    final static int  EXPLODE=3;
+    final static int  OVER=4;
+
+    private static int CENTERX;
+    private static int CENTERY;
+
+    private int mTouchSlop;
 
     private Paint paint;
     private Paint textPaint;
@@ -38,12 +48,15 @@ public class CustomDragView extends View {
     private double cos;
     private int originRadius;
     private int currRadius;
+
+    private int explodeRadius;
+    private int explodePara;
     private int maxLength;
 
     Path path;
     int status;
 
-    private String text="99+";
+    private String text="99";
     private int ascent;
 
     @Override
@@ -51,7 +64,6 @@ public class CustomDragView extends View {
         setMeasuredDimension(measureWidth(widthMeasureSpec),
                 measureHeight(heightMeasureSpec));
     }
-
 
     private int measureWidth(int measureSpec) {
         int result = 0;
@@ -99,31 +111,29 @@ public class CustomDragView extends View {
 
     public CustomDragView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        paint=new Paint();
+
         textPaint=new Paint();
         textPaint.setColor(Color.BLUE);
         textPaint.setTextSize(40);
-        startX=40;
-        startY=40;
 
+        paint=new Paint();
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.FILL);
+        paint.setAntiAlias(true);
+
         currRadius=originRadius=30;
         maxLength=10*originRadius;
 
         path=new Path();
         status=IDLE;
-        paint.setAntiAlias(true);
+        mTouchSlop= ViewConfiguration.get(context).getScaledTouchSlop();
+
     }
-
-
-
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(status==MOVE_INSIDE){
-
+        if(status==INSIDE || status==ANIMATION){
             path.reset();
             int startUpX= (int) (startX+currRadius*sin);
             int startUpY= (int) (startY-currRadius*cos);
@@ -147,13 +157,24 @@ public class CustomDragView extends View {
             canvas.drawPath(path,paint);
 
             canvas.save();
-            canvas.translate(endX-startX,endY-startY);
-            canvas.drawRoundRect(0,0,getWidth(),getHeight(),20,20,paint);
+            canvas.translate(endX-originRadius,endY-originRadius);
+            canvas.drawRoundRect(0,0,getWidth(),getHeight(),getHeight()/2,getHeight()/2,paint);
             canvas.drawText(text, getPaddingLeft(), getPaddingTop() - ascent, textPaint);
             canvas.restore();
-        }else {
-            canvas.drawRoundRect(0,0,getWidth(),getHeight(),23,23,paint);
-            Log.d("fxlts",getHeight()+"");
+
+//        }else if(status==OUTSIDE){
+//            canvas.save();
+//            canvas.translate(endX-originRadius,endY-originRadius);
+//            canvas.drawRoundRect(0,0,getWidth(),getHeight(),getHeight()/2,getHeight()/2,paint);
+//            canvas.drawText(text, getPaddingLeft(), getPaddingTop() - ascent, textPaint);
+//            canvas.restore();
+        } else if(status==EXPLODE){
+            drawDotsFrame(canvas);
+        }else if(status==OVER){
+            return;
+        }
+        else {
+            canvas.drawRoundRect(0,0,getWidth(),getHeight(),getHeight()/2,getHeight()/2,paint);
             canvas.drawText(text, getPaddingLeft(), getPaddingTop() - ascent, textPaint);
         }
 
@@ -162,41 +183,43 @@ public class CustomDragView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        //startX=w/2;
-        //startY=h/2;
+        CENTERX=startX=w/2;
+        CENTERX=startY=h/2;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                status=MOVE_INSIDE;
+                status=INSIDE;
                 getParent().requestDisallowInterceptTouchEvent(true);
                 break;
             case MotionEvent.ACTION_MOVE:
-                int x=(int) event.getX();
-                int y=(int) event.getY();
-                if(status==MOVE_OUTSIDE){
-                    startX=x;
-                    startY=y;
-                }else {
-                    endX=x;
-                    endY=y;
-                    double length=changEndPoint(x,y);
-                    if(length>maxLength){
+                endX=(int) event.getX();
+                endY=(int) event.getY();
+                if(Math.abs(endX-CENTERX)<mTouchSlop && Math.abs(endY -CENTERY) < mTouchSlop ){
+                    return true;
+                }
+                if(status==OVER){
+                    return true;
+                }
+                if(status==INSIDE){
+                    boolean isOut=onPositionChange(endX-startX,endY-startY);
+                    if(isOut){
+                        status=ANIMATION;
                         goOut();
-                        status=MOVE_OUTSIDE;
                     }
                 }
                 postInvalidate();
                 break;
 
             case MotionEvent.ACTION_UP:
-                goBack();
-                //status=IDLE;
+                if(status==INSIDE){
+                    status=ANIMATION;
+                    goBack();
+                }
                 break;
         }
-
         return true;
     }
 
@@ -204,77 +227,96 @@ public class CustomDragView extends View {
         PropertyValuesHolder endXHolder=PropertyValuesHolder.ofInt("endX",endX,startX);
         PropertyValuesHolder endYHolder=PropertyValuesHolder.ofInt("endY",endY,startY);
         ObjectAnimator animator=ObjectAnimator.ofPropertyValuesHolder(this,endXHolder,endYHolder).setDuration(100);
-        animator.setInterpolator(new OvershootInterpolator());
+        animator.setInterpolator(new OvershootInterpolator(4));
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
                 status=IDLE;
-                invalidate();
+                postInvalidate();
             }
         });
         animator.start();
     }
-
     private void goOut(){
         PropertyValuesHolder endXHolder=PropertyValuesHolder.ofInt("startX",startX,endX);
         PropertyValuesHolder endYHolder=PropertyValuesHolder.ofInt("startY",startY,endY);
         ObjectAnimator animator=ObjectAnimator.ofPropertyValuesHolder(this,endXHolder,endYHolder).setDuration(100);
         animator.setInterpolator(new AccelerateInterpolator());
-        animator.start();
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                status=EXPLODE;
+                postInvalidate();
+            }
+        });
+        //animator.start();
+        ObjectAnimator explodeAnimation=ObjectAnimator.ofInt(this,"explodePara",1,10).setDuration(500);
+        explodeAnimation.setInterpolator(new AccelerateInterpolator());
+        explodeAnimation.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                status=OVER;
+                postInvalidate();
+            }
+        });
+        AnimatorSet animatorSet=new AnimatorSet();
+        animatorSet.playSequentially(animator,explodeAnimation);
+        animatorSet.start();
 
     }
-
-    private double changEndPoint(int x,int y){
-        double deltaX=x-startX;
-        double deltaY=y-startY;
-        double hypotenuse=Math.sqrt(deltaX*deltaX+deltaY*deltaY);
+    private boolean onPositionChange(int deltaX,int deltaY){
+        double hypotenuse=Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+        changeRadius(hypotenuse);
         sin=deltaY/hypotenuse;
         cos=deltaX/hypotenuse;
-        currRadius= (int) ((1-hypotenuse/maxLength)*originRadius);
-        currRadius=Math.max(5,currRadius);
-        return hypotenuse;
-    }
-
-    private void changeStartPoint(int x,int y){
-        double deltaX=endX-x;
-        double deltaY=endY-y;
-        double hypotenuse=Math.sqrt(deltaX*deltaX+deltaY*deltaY);
-        sin=deltaY/hypotenuse;
-        cos=deltaX/hypotenuse;
-        currRadius= (int) ((1-hypotenuse/maxLength)*originRadius);
-        currRadius=Math.max(5,currRadius);
-
+        if(hypotenuse>maxLength) {
+            return true;
+        }
+        return false;
     }
 
     private void  changeRadius(double length){
-
+        currRadius= (int) ((1-length/maxLength)*originRadius);
+        currRadius=Math.max(5,currRadius);
     }
 
     public void setEndX(int x){
         endX=x;
-
     }
+
     //TODO bad code
     public void setEndY(int y){
         endY=y;
-        changEndPoint(endX,endY);
-        invalidate();
+        onPositionChange(endX-startX,endY-startY);
+        postInvalidate();
     }
 
     public void setStartX(int x){
         startX=x;
-
     }
     public void setStartY(int y){
         startY=y;
-        changeStartPoint(startX,startX);
-        invalidate();
+        onPositionChange(endX-startX,endY-startY);
+        postInvalidate();
     }
 
-
+    public void setExplodePara(int para){
+        explodeRadius=50+10*para;
+        paint.setAlpha(255-25*para);
+        postInvalidate();
+    }
 
     /************************************** explode **********************/
 
+    private void drawDotsFrame(Canvas canvas) {
+        for (int i = 0; i < 12; i++) {
+            int cX = (int) (endX + explodeRadius * Math.cos((i * 30) * Math.PI / 180));
+            int cY = (int) (endY + explodeRadius * Math.sin((i * 30 ) * Math.PI / 180));
+            canvas.drawCircle(cX, cY, 10, paint);
+        }
+    }
 
 }

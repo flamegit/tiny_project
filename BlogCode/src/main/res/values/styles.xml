@@ -17,4 +17,25 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+
+    <!-- ************************************* -->
+    <style  name="HotNewsImage">
+      <item name="android:layout_marginLeft">7dp</item>
+        <item name="android:layout_marginRight">7dp</item>
+      <item name="android:layout_height">85dp</item>
+      <item name="android:layout_width">85dp</item>
+        <item name="android:scaleType">centerCrop</item>
+
+  </style>
+
+    <style  name="HotNewsText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">#979797</item>
+    </style>
+
 </resources>
