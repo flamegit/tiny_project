@@ -1,11 +1,13 @@
 package com.flame.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.test.R;
 import com.flame.Utils.RxBus;
 
 import java.util.ArrayList;
@@ -27,6 +29,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    public void refresh(){
+        mlists.set(0,20);
+        notifyItemChanged(0);
+    }
+
     public void showFooter(){
         isBottom=true;
         notifyItemInserted(getItemCount());
@@ -43,20 +50,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       return  new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1,parent,false));
+       return  new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.drag_text_layout,parent,false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(getItemViewType(position)==FOOTER){
-            ((TextView) holder.itemView).setText("Bottom");
-        }else {
-            ((TextView) holder.itemView).setText(""+mlists.get(position));
-        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RxBus.getDefault().post(new RxBus.ItemEvent());
+                Log.d("fxlts","onclick");
+
             }
         });
     }
@@ -70,8 +74,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mlists.remove(position);
         notifyItemRemoved(position);
     }
-
-
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {

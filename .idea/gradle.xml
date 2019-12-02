@@ -4,6 +4,18 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+<<<<<<< HEAD
+=======
+        <option name="gradleHome" value="D:\android-studio-ide-143.2637817-windows\android-studio\gradle\gradle-2.14.1" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/BlogCode" />
+            <option value="$PROJECT_DIR$/Practice" />
+          </set>
+        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
+>>>>>>> c0b864c922531d96cc43ba541c2d8489d8e075cf
       </GradleProjectSettings>
     </option>
   </component>

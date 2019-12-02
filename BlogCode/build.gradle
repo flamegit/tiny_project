@@ -22,9 +22,15 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.makeramen:roundedimageview:2.2.1'
     compile 'com.android.support:design:23.4.0'
     compile 'io.reactivex:rxjava:1.2.1'
     compile 'com.android.support:support-v4:23.4.0'
+<<<<<<< HEAD
     testCompile 'junit:junit:4.12'
     //compile 'com.wilddog:wilddog-client-android:0.6.7'
+=======
+    compile 'com.wilddog:wilddog-client-android:0.6.7'
+    testCompile 'junit:junit:4.12'
+>>>>>>> c0b864c922531d96cc43ba541c2d8489d8e075cf
 }
